@@ -2,9 +2,10 @@ package businessLayer;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 
 public class MediaplayerFX implements MediaplayerInterface{
-	private Media media = new Media(null);
+	private Media media = null;
 	private MediaPlayer mediaplayer = null;
 	@Override
 	public void play(String songLocal) {
@@ -17,7 +18,9 @@ public class MediaplayerFX implements MediaplayerInterface{
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
-		if(mediaplayer != null) mediaplayer.pause();
+		if(mediaplayer == null) return;
+		else if(mediaplayer.getStatus() == Status.PAUSED) mediaplayer.play();
+		else mediaplayer.pause();
 	}
 
 	@Override
@@ -44,6 +47,15 @@ public class MediaplayerFX implements MediaplayerInterface{
 	@Override
 	public Object getMedia() {
 		return mediaplayer;
+	}
+
+	@Override
+	public Boolean isStop() {
+		// TODO Auto-generated method stub
+		if(mediaplayer == null) return true;
+		MediaPlayer.Status status =  mediaplayer.getStatus();
+		if(MediaPlayer.Status.STOPPED == status) return true;
+		else return false;
 	}
 
 

@@ -1,10 +1,15 @@
 package ui;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import businessLayer.MediaplayerFX;
+import businessLayer.MediaplayerInterface;
 import businessLayer.fileLocationManagement.LocationFinder;
+import businessLayer.fileLocationManagement.PathShowerPC;
+import entitiesLayer.FileExtensionsList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -49,8 +54,12 @@ public class MainappControl implements Initializable{
 		
 	}
 	public void playSong() {
-		management.playSong();
-		putImage(btnPlay, "stop");
+		management.continueSong();
+		if(management.getMediaplayer().isStop()) putImage(btnPlay, "stop");
+		else putImage(btnPlay, "play");
+	}
+	public void setMedia() {
+		management.setMedia(mvPlayer);
 	}
 	private void putImage(Labeled sceneObject, String imagename) {
 		ImageView btnimg = (ImageView) sceneObject.getGraphic();
@@ -60,7 +69,17 @@ public class MainappControl implements Initializable{
 
 }
 class ProgramManagement{
-	public void playSong() {
-		System.out.println("i am playing song");
+	private MediaplayerInterface mediaplayer = new MediaplayerFX();
+	public void continueSong() {
+		mediaplayer.stop();
+	}
+	public void setMedia(MediaView mediaview) {
+		File file = PathShowerPC.FilelocationPC(FileExtensionsList.videoExt);
+		if(file == null) return;
+		mediaplayer.play(LocationFinder.filetoURL(file).toString());
+		mediaview.setMediaPlayer((MediaPlayer)mediaplayer.getMedia());
+	}
+	public MediaplayerInterface getMediaplayer() {
+		return mediaplayer;
 	}
 }

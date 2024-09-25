@@ -8,6 +8,9 @@ public class FileExtensionsList {
 	public static final FileExtensions audioExt = new FileExtensions(
 			"Audio files",
 			new String[] {"mp3"});
+	public static final FileExtensions videoExt = new FileExtensions(
+			"Video files",
+			new String[] {"mp4","wav"});
 	public static final FileExtensions photoExt = new FileExtensions(
 			"Image files", 
 			new String[]{"png","jpg","jpeg"});
