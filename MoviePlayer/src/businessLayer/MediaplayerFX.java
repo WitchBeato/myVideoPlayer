@@ -23,12 +23,15 @@ public class MediaplayerFX implements MediaplayerInterface{
 	@Override
 	public void close() {
 		// TODO Auto-generated method stub
-		if(mediaplayer != null) mediaplayer.stop();
+		if(mediaplayer == null) return;
+		mediaplayer.stop();
+		mediaplayer = null;
 	}
 
 	@Override
 	public void setSound(int soundlevel) {
 		// TODO Auto-generated method stub
+		if(mediaplayer == null) return;
 		double volume = (double)(soundlevel)/100;
 		mediaplayer.setVolume(volume);
 	}

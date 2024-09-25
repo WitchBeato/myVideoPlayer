@@ -1,6 +1,8 @@
 package businessLayer.fileLocationManagement;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.text.html.parser.Entity;
 
@@ -20,10 +22,20 @@ public class LocationFinder {
 	public static File IMGfinder(String filename) {
 		FileExtensions imgExtensions = entitiesLayer.FileExtensionsList.photoExt;
 		for (String extension : imgExtensions.getExtensions()) {
-			File file = FileFinder(filename+"."+extension, UIlocal);
+			File file = FileFinder(filename+"."+extension, IMGlocal);
 			if(file != null) return file;
 		}
 		return null;
+	}
+	public static URL filetoURL(File file) {
+		URL location = null;
+		try {
+			location =file.toURI().toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return location;
 	}
 	private static File FileFinder(String filename, String filelocal) {
 		String filelocation = filelocal+"\\"+filename;
