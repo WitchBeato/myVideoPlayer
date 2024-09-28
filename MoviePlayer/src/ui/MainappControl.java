@@ -4,6 +4,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import businessLayer.MediaplayerFX;
 import businessLayer.MediaplayerInterface;
@@ -46,30 +48,67 @@ public class MainappControl implements Initializable{
 
 	@FXML
 	private Slider sldSound;
-	ProgramManagement management = new ProgramManagement();
+	ProgramManagement management = new ProgramManagement() {
+		public void setTime(int time) {
+			super.setTime(time);
+			sldTime.setValue(time);
+		};
+	};
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
+		sldSound.setMax(100);
 		
+	}
+	public void setHertzwithSlider() {
+		int value = (int) sldSound.getValue();
+		management.setHertz(value);
+		management.SetMute(false);
+		changeSoundButtonwithHertz();
+	}
+	public void setMuteW() {
+		management.SetMute();
+		Boolean isMute = management.getMute();
+		if(isMute) putImage(btnSound, "soundlevel0");
+		else {
+			changeSoundButtonwithHertz();
+		}
 	}
 	public void playSong() {
 		management.continueSong();
-		if(management.getMediaplayer().isStop()) putImage(btnPlay, "stop");
+		Boolean isStop = management.getMediaplayer().isStop();
+		if(isStop) putImage(btnPlay, "stop");
 		else putImage(btnPlay, "play");
 	}
 	public void setMedia() {
 		management.setMedia(mvPlayer);
+		setOpenFile();
+	}
+	//this method change the 
+	private void changeSoundButtonwithHertz() {
+		int value = (int) sldSound.getValue();
+		String soundlvIcon = management.getSoundLVName(value);
+		putImage(btnSound, soundlvIcon);
 	}
 	private void putImage(Labeled sceneObject, String imagename) {
 		ImageView btnimg = (ImageView) sceneObject.getGraphic();
 		Image image = new Image(LocationFinder.filetoURL(LocationFinder.IMGfinder(imagename)).toString());
 		btnimg.setImage(image);
 	}
+	private void setOpenFile() {
+		sldSound.setValue(50);
+		setHertzwithSlider();
+		sldTime.setValue(0);
+		double value = mvPlayer.getMediaPlayer().getMedia().getDuration().toSeconds();
+		sldTime.setMax(value);
+	}
 
 }
 class ProgramManagement{
 	private MediaplayerInterface mediaplayer = new MediaplayerFX();
+	private Timer musicTimer;
+	private int time;
+	public static int SOUNDLV0 = 0, SOUNDLV1 = 30, SOUNDLV2 = 70;
 	public void continueSong() {
 		mediaplayer.stop();
 	}
@@ -78,8 +117,52 @@ class ProgramManagement{
 		if(file == null) return;
 		mediaplayer.play(LocationFinder.filetoURL(file).toString());
 		mediaview.setMediaPlayer((MediaPlayer)mediaplayer.getMedia());
+		setTimer();
+
+	}
+	public void setHertz(int hertz) {
+		mediaplayer.setSound(hertz);
+	}
+	public void SetMute(Boolean isMute) {
+		if(mediaplayer.getMute() != isMute) mediaplayer.muteSound();
+	}
+	public void SetMute() {
+		mediaplayer.muteSound();
+	}
+	public String getSoundLVName(int hertz) {
+		if(hertz == 0) return "soundlevel0";
+	    else if(hertz < SOUNDLV1) return "soundlevel1";
+		else if(SOUNDLV1<hertz && hertz<SOUNDLV2) return "soundlevel2";
+		else if(hertz>SOUNDLV2) return "soundlevel3";
+		else return "soundlevel0";
+	}
+	public Boolean getMute() {
+		return mediaplayer.getMute();
 	}
 	public MediaplayerInterface getMediaplayer() {
 		return mediaplayer;
 	}
+	public int getTime() {
+		return time;
+	}
+	public void setTime(int time) {
+		this.time = time;
+	}
+	private void setTimer() {
+		time = 0;
+		musicTimer = new Timer();
+		TimerTask task = new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				setTime(time+1);
+			}
+		};
+		getMusicTimer().scheduleAtFixedRate(task, 0, 1000);
+	}
+	public Timer getMusicTimer() {
+		return musicTimer;
+	}
+	
 }

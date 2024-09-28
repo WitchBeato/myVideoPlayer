@@ -12,10 +12,12 @@ public class PathShowerPC{
         FileChooser chooser = new FileChooser();
         String newExtensions[] = extension.getExtensions();
         chooser.setTitle("select a file!");
-        for (int i = 0; i < extension.getExtensions().length; i++) {
-        	newExtensions[i] = "*" + "." + newExtensions[i];
-        }
-        ExtensionFilter filter = new ExtensionFilter(extension.getExplanation(), extension.getExtensions());
+    	if(newExtensions[0].charAt(0) != '*') {
+            for (int i = 0; i < extension.getExtensions().length; i++) {
+            	newExtensions[i] = "*" + "." + newExtensions[i];
+            }
+    	}
+        ExtensionFilter filter = new ExtensionFilter(extension.getExplanation(), newExtensions);
         chooser.getExtensionFilters().add(filter);
 
         File selectedDirectory = chooser.showOpenDialog(new Stage());   

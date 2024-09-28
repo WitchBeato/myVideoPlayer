@@ -7,5 +7,6 @@ public interface MediaplayerInterface {
 	public void close();
 	public void setSound(int soundlevel);
 	public void muteSound();
+	public Boolean getMute();
 	public Object getMedia();
 }

@@ -60,7 +60,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnSound" layoutX="418.0" layoutY="6.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="31.0">
+                  <Button fx:id="btnSound" layoutX="418.0" layoutY="6.0" mnemonicParsing="false" onMousePressed="#setMuteW" prefHeight="34.0" prefWidth="31.0">
                      <graphic>
                         <ImageView fitHeight="22.0" fitWidth="15.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                            <viewport>
@@ -72,7 +72,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Slider fx:id="sldSound" layoutX="456.0" layoutY="12.0" prefHeight="22.0" prefWidth="141.0" />
+                  <Slider fx:id="sldSound" layoutX="456.0" layoutY="12.0" onDragDetected="#setHertzwithSlider" onDragDone="#setHertzwithSlider" onDragDropped="#setHertzwithSlider" prefHeight="22.0" prefWidth="141.0" />
                </children>
             </AnchorPane>
          </center>
