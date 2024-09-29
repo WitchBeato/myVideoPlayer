@@ -99,26 +99,33 @@ public class MainappControl implements Initializable{
 		sldSound.setValue(50);
 		setHertzwithSlider();
 		sldTime.setValue(0);
-		double value = mvPlayer.getMediaPlayer().getMedia().getDuration().toSeconds();
-		sldTime.setMax(value);
+		sldTime.setMax(management.getFullTime());
 	}
 
 }
 class ProgramManagement{
 	private MediaplayerInterface mediaplayer = new MediaplayerFX();
-	private Timer musicTimer;
-	private int time;
+	private Timer mediaTimer = new Timer();
+	private int time,timeMediaEnd;
 	public static int SOUNDLV0 = 0, SOUNDLV1 = 30, SOUNDLV2 = 70;
 	public void continueSong() {
 		mediaplayer.stop();
 	}
 	public void setMedia(MediaView mediaview) {
+		timerEnd();
 		File file = PathShowerPC.FilelocationPC(FileExtensionsList.videoExt);
 		if(file == null) return;
 		mediaplayer.play(LocationFinder.filetoURL(file).toString());
 		mediaview.setMediaPlayer((MediaPlayer)mediaplayer.getMedia());
-		setTimer();
-
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		timeMediaEnd = mediaplayer.getLenght();
+		timerStart();
+		
 	}
 	public void setHertz(int hertz) {
 		mediaplayer.setSound(hertz);
@@ -130,7 +137,7 @@ class ProgramManagement{
 		mediaplayer.muteSound();
 	}
 	public String getSoundLVName(int hertz) {
-		if(hertz == 0) return "soundlevel0";
+		if(hertz == SOUNDLV0) return "soundlevel0";
 	    else if(hertz < SOUNDLV1) return "soundlevel1";
 		else if(SOUNDLV1<hertz && hertz<SOUNDLV2) return "soundlevel2";
 		else if(hertz>SOUNDLV2) return "soundlevel3";
@@ -142,27 +149,36 @@ class ProgramManagement{
 	public MediaplayerInterface getMediaplayer() {
 		return mediaplayer;
 	}
+	public int getFullTime() {
+		return timeMediaEnd;
+	}
 	public int getTime() {
 		return time;
 	}
 	public void setTime(int time) {
 		this.time = time;
 	}
-	private void setTimer() {
+	private void timerStart() {
 		time = 0;
-		musicTimer = new Timer();
+		mediaTimer = new Timer();
 		TimerTask task = new TimerTask() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				setTime(time+1);
+				if(time>timeMediaEnd) timerEnd();
 			}
 		};
 		getMusicTimer().scheduleAtFixedRate(task, 0, 1000);
 	}
+	private void timerEnd() {
+		mediaTimer.cancel();
+		time = 0;
+		timeMediaEnd = 0;
+	}
 	public Timer getMusicTimer() {
-		return musicTimer;
+		return mediaTimer;
 	}
 	
 }
