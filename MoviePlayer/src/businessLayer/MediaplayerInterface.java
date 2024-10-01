@@ -8,8 +8,8 @@ public interface MediaplayerInterface {
 	public void setSound(int soundlevel);
 	public void muteSound();
 	public Boolean getMute();
-	public int getLenght();
-	public void setTime(int second);
-	public int getTime();
+	public long getLenght();
+	public void setTime(long second);
+	public long getCurrentTime();
 	public Object getMedia();
 }

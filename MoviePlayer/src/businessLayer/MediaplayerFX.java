@@ -93,7 +93,7 @@ public class MediaplayerFX implements MediaplayerInterface{
 		
 	}
 	@Override
-	public int getLenght() {
+	public long getLenght() {
 		Metadata metadata = null;
 		try {
 			metadata = ImageMetadataReader.readMetadata(filelocal);
@@ -113,18 +113,18 @@ public class MediaplayerFX implements MediaplayerInterface{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Duration second = new Duration(duration);
-		return (int) second.toSeconds();
+		Duration milisecond = new Duration(duration);
+		return (long) milisecond.toMillis();
 	}
 	@Override
-	public void setTime(int second) {
+	public void setTime(long second) {
 		// TODO Auto-generated method stub
-		mediaplayer.seek(Duration.seconds(second));
+		mediaplayer.seek(Duration.millis(second));
 	}
 	@Override
-	public int getTime() {
+	public long getCurrentTime() {
 		// TODO Auto-generated method stub
-		return (int) mediaplayer.getCurrentTime().toSeconds();
+		return (long) mediaplayer.getCurrentTime().toMillis();
 	}
 	public File getFilelocal() {
 		return filelocal;

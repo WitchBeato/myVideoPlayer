@@ -1,7 +1,6 @@
 package ui;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -15,7 +14,6 @@ import entitiesLayer.FileExtensionsList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
@@ -48,23 +46,38 @@ public class MainappControl implements Initializable{
 
 	@FXML
 	private Slider sldSound;
+	private static int  MILISECOND = 1000;
 	ProgramManagement management = new ProgramManagement() {
-		public void setTime(int time) {
-			super.setTime(time);
-			sldTime.setValue(time);
+		@Override
+		public void setTime(long second) {
+			super.setTime(second);
+			sldTime.setValue(second);
+		};
+		@Override
+		public void setIsPaused(Boolean isPaused) {
+			super.setIsPaused(isPaused);
+			if(isPaused) putImage(btnPlay, "stop");
+			else putImage(btnPlay, "play");
 		};
 	};
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		sldSound.setMax(100);
-		
 	}
 	public void setHertzwithSlider() {
 		int value = (int) sldSound.getValue();
 		management.setHertz(value);
 		management.SetMute(false);
 		changeSoundButtonwithHertz();
+	}
+	public void setTimewithSlider() {
+		int second = (int) sldTime.getValue();
+		management.setTime(second);
+		management.setIsPaused(false);
+	}
+	public void pauseTimer() {
+		management.setIsPaused(true);
 	}
 	public void setMuteW() {
 		management.SetMute();
@@ -75,14 +88,25 @@ public class MainappControl implements Initializable{
 		}
 	}
 	public void playSong() {
-		management.continueSong();
+		try {
+			management.continueorstopSong();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Boolean isStop = management.getMediaplayer().isStop();
-		if(isStop) putImage(btnPlay, "stop");
-		else putImage(btnPlay, "play");
+
 	}
 	public void setMedia() {
 		management.setMedia(mvPlayer);
 		setOpenFile();
+	}
+	private final int timeForward = 10*MILISECOND;
+	public void btnNext() {
+		management.forwardTime(timeForward);
+	}
+	public void btnPrev() {
+		management.forwardTime(-timeForward);
 	}
 	//this method change the 
 	private void changeSoundButtonwithHertz() {
@@ -106,10 +130,12 @@ public class MainappControl implements Initializable{
 class ProgramManagement{
 	private MediaplayerInterface mediaplayer = new MediaplayerFX();
 	private Timer mediaTimer = new Timer();
-	private int time,timeMediaEnd;
+	private Boolean isPaused = false;
+	private long timeMediaEnd;
 	public static int SOUNDLV0 = 0, SOUNDLV1 = 30, SOUNDLV2 = 70;
-	public void continueSong() {
+	public void continueorstopSong() throws InterruptedException {
 		mediaplayer.stop();
+		setIsPaused(!getIsPaused());
 	}
 	public void setMedia(MediaView mediaview) {
 		timerEnd();
@@ -117,12 +143,6 @@ class ProgramManagement{
 		if(file == null) return;
 		mediaplayer.play(LocationFinder.filetoURL(file).toString());
 		mediaview.setMediaPlayer((MediaPlayer)mediaplayer.getMedia());
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		timeMediaEnd = mediaplayer.getLenght();
 		timerStart();
 		
@@ -149,36 +169,58 @@ class ProgramManagement{
 	public MediaplayerInterface getMediaplayer() {
 		return mediaplayer;
 	}
-	public int getFullTime() {
+	public long getFullTime() {
 		return timeMediaEnd;
 	}
-	public int getTime() {
-		return time;
+	public long getTime() {
+		long current = mediaplayer.getCurrentTime();
+		return current;
 	}
-	public void setTime(int time) {
-		this.time = time;
+	public void setTime(long second) {
+
+		if(timeMediaEnd<second) second = timeMediaEnd;
+		else if(second < 0) second = 0;
+	}
+	public void seekTime(long second) {
+		mediaplayer.setTime(second);
+		setIsPaused(false);
+		if(mediaplayer.isStop())mediaplayer.stop();
+	}
+	//it can got in time to previous seconds or forward seconds
+	public void forwardTime(long second) {
+		long newTime = second + (int)(getTime());
+		seekTime(newTime);
+
+	}
+	public Timer getMusicTimer() {
+		return mediaTimer;
+	}
+	public Boolean getIsPaused() {
+		return isPaused;
+	}
+	public void setIsPaused(Boolean isPaused) {
+		this.isPaused = isPaused;
 	}
 	private void timerStart() {
-		time = 0;
 		mediaTimer = new Timer();
 		TimerTask task = new TimerTask() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				setTime(time+1);
-				if(time>timeMediaEnd) timerEnd();
+				if(getIsPaused()) return;
+				setTime(mediaplayer.getCurrentTime());
+				if(getTime()>timeMediaEnd) {
+					timerEnd();
+				}
 			}
 		};
-		getMusicTimer().scheduleAtFixedRate(task, 0, 1000);
+		getMusicTimer().scheduleAtFixedRate(task, 0, 50);
 	}
 	private void timerEnd() {
 		mediaTimer.cancel();
-		time = 0;
 		timeMediaEnd = 0;
 	}
-	public Timer getMusicTimer() {
-		return mediaTimer;
-	}
+
 	
 }

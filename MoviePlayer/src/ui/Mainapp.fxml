@@ -19,7 +19,7 @@
    <bottom>
       <BorderPane prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <top>
-            <Slider fx:id="sldTime" prefHeight="21.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+            <Slider fx:id="sldTime" onDragDetected="#pauseTimer" prefHeight="21.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
          </top>
          <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -36,7 +36,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnNext" layoutX="333.0" layoutY="6.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="31.0">
+                  <Button fx:id="btnNext" layoutX="333.0" layoutY="6.0" mnemonicParsing="false" onAction="#btnNext" prefHeight="34.0" prefWidth="31.0">
                      <graphic>
                         <ImageView fitHeight="52.0" fitWidth="15.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                            <viewport>
@@ -48,7 +48,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnPrev" layoutX="235.0" layoutY="6.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="31.0">
+                  <Button fx:id="btnPrev" layoutX="235.0" layoutY="6.0" mnemonicParsing="false" onAction="#btnPrev" prefHeight="34.0" prefWidth="31.0">
                      <graphic>
                         <ImageView fitHeight="22.0" fitWidth="15.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" rotate="180.0">
                            <viewport>
