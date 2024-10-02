@@ -11,9 +11,11 @@ import businessLayer.MediaplayerInterface;
 import businessLayer.fileLocationManagement.LocationFinder;
 import businessLayer.fileLocationManagement.PathShowerPC;
 import entitiesLayer.FileExtensionsList;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
@@ -49,6 +51,10 @@ public class MainappControl implements Initializable{
 
 	@FXML
 	private Slider sldSound;
+	@FXML 
+	private Label lblCurrent;
+	@FXML 
+	private Label lblFulltime;
 	
 	private static int  MILISECOND = 1000;
 	
@@ -57,6 +63,15 @@ public class MainappControl implements Initializable{
 		public void setTime(long second) {
 			super.setTime(second);
 			if(!getIsPaused())sldTime.setValue(second);
+			Platform.runLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					lblCurrent.setText(management.milisecondtoString(second));
+				}
+			});
+
 		};
 		@Override
 		public void setIsPaused(Boolean isPaused) {
@@ -144,7 +159,9 @@ public class MainappControl implements Initializable{
 		sldSound.setValue(50);
 		setHertzwithSlider();
 		sldTime.setValue(0);
-		sldTime.setMax(management.getFullTime());
+		long fulltime = management.getFullTime();
+		sldTime.setMax(fulltime);
+		lblFulltime.setText(management.milisecondtoString(fulltime));
 	}
 
 }
@@ -222,6 +239,35 @@ class ProgramManagement{
 	public void setIsPaused(Boolean isPaused) {
 		this.isPaused = isPaused;
 		mediaplayer.stop(isPaused);
+	}
+	public String milisecondtoString(long milisecond) {
+		int second = (int)(milisecond/1000);
+		int minute = second/60;
+		int hour = minute/60;
+		second = second % 60;
+		minute = minute % 60;
+		String hourString;
+		if(hour == 0) {
+			hourString = "";
+		}
+		else {
+			hourString = timetoClockString(hour);
+			if(hour<10) {
+				hourString = hourString.substring(1, hourString.length())+":";
+			}
+		}
+		String text = hourString+timetoClockString(minute)+":"+timetoClockString(second);
+		return text;
+	}
+	private String timetoClockString(int time) {
+		String text;
+		if(time < 10) {
+			text = "0" + time;
+		}
+		else {
+			text = Integer.toString(time);
+		}
+		return text;
 	}
 	private void timerStart() {
 		mediaTimer = new Timer();

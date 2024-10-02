@@ -4,7 +4,17 @@
 .mylightbackgroundColor{
 	-fx-background-color: rgb(114, 56, 168);
 }
-
+.media-button {
+    -fx-pref-width: 40px;
+    -fx-pref-height: 40px;
+    -fx-padding: 5px; 
+}
+.label-Time {
+	-fx-text-fill: rgb(160,158,214);
+	-fx-font-size: 18px; /* adjust font size to 18 pixels */
+    -fx-font-family: "Lucida Fax"; /* set font family to Lucida Fax */
+    -fx-font-weight: bold; /* set font weight to bold */
+}
 .mybackgroundColor{
 	-fx-background-color: rgb(75,39,109);
 }
@@ -18,8 +28,10 @@
 .button{
 	-fx-background-color: rgb(111,84,149);
 }
-.media-button {
-    -fx-pref-width: 40px;
-    -fx-pref-height: 40px;
-    -fx-padding: 5px; 
+.MenuItem{
+	-fx-text-fill: white;
 }
+.menu:showing .label {
+    -fx-text-fill: red; /* change text color to red when menu is shown */
+}
+
