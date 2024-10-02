@@ -45,11 +45,11 @@ public class MediaplayerFX implements MediaplayerInterface{
 	}
 
 	@Override
-	public void stop() {
+	public void stop(Boolean isPaused) {
 		// TODO Auto-generated method stub
 		if(mediaplayer == null) return;
-		else if(mediaplayer.getStatus() == Status.PAUSED) mediaplayer.play();
-		else mediaplayer.pause();
+		else if(isPaused) mediaplayer.pause();
+		else mediaplayer.play();
 	}
 
 	@Override

@@ -1,0 +1,25 @@
+.roundbutton{
+	-fx-background-radius: 30;
+}
+.mylightbackgroundColor{
+	-fx-background-color: rgb(114, 56, 168);
+}
+
+.mybackgroundColor{
+	-fx-background-color: rgb(75,39,109);
+}
+.color-slider{
+    -fx-control-inner-background:rgb(114, 56, 168);
+}
+.color-slider .thumb{
+	-fx-background-color: rgb(111,84,149);
+}
+
+.button{
+	-fx-background-color: rgb(111,84,149);
+}
+.media-button {
+    -fx-pref-width: 40px;
+    -fx-pref-height: 40px;
+    -fx-padding: 5px; 
+}

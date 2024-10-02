@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
@@ -12,21 +13,29 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.media.MediaView?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainappControl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="mylightbackgroundColor" stylesheets="@CSS%20files/Color.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainappControl">
    <center>
-      <MediaView fx:id="mvPlayer" fitHeight="350.0" fitWidth="600.0" BorderPane.alignment="CENTER" />
+      <AnchorPane fx:id="videoPane" BorderPane.alignment="CENTER">
+         <children>
+            <MediaView fx:id="mvPlayer" style="-fx-background-color: rgb(114, 56, 168);" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
    </center>
    <bottom>
       <BorderPane prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <top>
-            <Slider fx:id="sldTime" onDragDetected="#pauseTimer" prefHeight="21.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+            <Slider fx:id="sldTime" onDragDetected="#pauseTimer" onMouseClicked="#sldTimeClicked" onMousePressed="#sldTimeClicked" onMouseReleased="#pauseTimer" prefHeight="21.0" prefWidth="600.0" stylesheets="@CSS%20files/Color.css" BorderPane.alignment="CENTER">
+               <styleClass>
+                  <String fx:value="mybackgroundColor" />
+                  <String fx:value="color-slider" />
+               </styleClass></Slider>
          </top>
          <center>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="mybackgroundColor" stylesheets="@CSS%20files/Color.css" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="btnPlay" layoutX="277.0" layoutY="-1.0" mnemonicParsing="false" onMouseClicked="#playSong" prefHeight="45.0" prefWidth="34.0">
+                  <Button fx:id="btnPlay" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="277.0" layoutY="-1.0" mnemonicParsing="false" onMouseClicked="#playSong" prefHeight="45.0" prefWidth="34.0" styleClass="roundbutton" stylesheets="@CSS%20files/Color.css">
                      <graphic>
-                        <ImageView fitHeight="40.0" fitWidth="33.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="58.0" fitWidth="34.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="media-button">
                            <viewport>
                               <Rectangle2D />
                            </viewport>
@@ -36,9 +45,9 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnNext" layoutX="333.0" layoutY="6.0" mnemonicParsing="false" onAction="#btnNext" prefHeight="34.0" prefWidth="31.0">
+                  <Button fx:id="btnNext" layoutX="333.0" layoutY="6.0" mnemonicParsing="false" onAction="#btnNext" prefHeight="34.0" prefWidth="31.0" styleClass="roundbutton" stylesheets="@CSS%20files/Color.css">
                      <graphic>
-                        <ImageView fitHeight="52.0" fitWidth="15.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="31.0" fitWidth="27.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="roundbutton">
                            <viewport>
                               <Rectangle2D />
                            </viewport>
@@ -48,9 +57,9 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnPrev" layoutX="235.0" layoutY="6.0" mnemonicParsing="false" onAction="#btnPrev" prefHeight="34.0" prefWidth="31.0">
+                  <Button fx:id="btnPrev" layoutX="225.0" layoutY="3.0" mnemonicParsing="false" onAction="#btnPrev" prefHeight="34.0" prefWidth="31.0" styleClass="roundbutton" stylesheets="@CSS%20files/Color.css">
                      <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="15.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" rotate="180.0">
+                        <ImageView fitHeight="53.0" fitWidth="29.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" rotate="180.0" smooth="false" styleClass="roundbutton">
                            <viewport>
                               <Rectangle2D />
                            </viewport>
@@ -72,25 +81,20 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Slider fx:id="sldSound" layoutX="456.0" layoutY="12.0" onDragDetected="#setHertzwithSlider" onDragDone="#setHertzwithSlider" onDragDropped="#setHertzwithSlider" prefHeight="22.0" prefWidth="141.0" />
+                  <Slider fx:id="sldSound" layoutX="456.0" layoutY="12.0" onDragDetected="#setHertzwithSlider" onDragDone="#setHertzwithSlider" onDragDropped="#setHertzwithSlider" onMouseReleased="#setHertzwithSlider" prefHeight="22.0" prefWidth="141.0" styleClass="color-slider" stylesheets="@CSS%20files/Color.css" />
                </children>
             </AnchorPane>
          </center>
       </BorderPane>
    </bottom>
    <top>
-      <MenuBar fx:id="menubar" BorderPane.alignment="CENTER">
+      <MenuBar fx:id="menubar" styleClass="mybackgroundColor" stylesheets="@CSS%20files/Color.css" BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" style="-fx-text-fill: #C9C9C9;" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#setMedia" text="Open" />
                   <MenuItem mnemonicParsing="false" text="Close" />
             </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-               <items>
-                  <MenuItem mnemonicParsing="false" text="how to use?" />
-               </items>
           </Menu>
         </menus>
       </MenuBar>

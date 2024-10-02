@@ -19,6 +19,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 
@@ -43,15 +44,19 @@ public class MainappControl implements Initializable{
 
 	@FXML
 	private Slider sldTime;
+	@FXML
+	private AnchorPane videoPane;
 
 	@FXML
 	private Slider sldSound;
+	
 	private static int  MILISECOND = 1000;
+	
 	ProgramManagement management = new ProgramManagement() {
 		@Override
 		public void setTime(long second) {
 			super.setTime(second);
-			sldTime.setValue(second);
+			if(!getIsPaused())sldTime.setValue(second);
 		};
 		@Override
 		public void setIsPaused(Boolean isPaused) {
@@ -64,6 +69,18 @@ public class MainappControl implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		sldSound.setMax(100);
+		sldTime.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
+		        setHertzwithSlider();
+		});
+		sldTime.valueChangingProperty().addListener((obs, oldVal, newVal) -> {
+		    if (!newVal) {
+		        long value = (long) sldTime.getValue();
+		        management.seekTime(value);
+		    }
+		});
+		mvPlayer.fitWidthProperty().bind(videoPane.widthProperty());
+		mvPlayer.fitHeightProperty().bind(videoPane.heightProperty());
+		
 	}
 	public void setHertzwithSlider() {
 		int value = (int) sldSound.getValue();
@@ -72,8 +89,11 @@ public class MainappControl implements Initializable{
 		changeSoundButtonwithHertz();
 	}
 	public void setTimewithSlider() {
-		int second = (int) sldTime.getValue();
-		management.setTime(second);
+		long second = (long) sldTime.getValue();
+		management.seekTime(second);
+	}
+	public void sldTimeClicked() {
+		setTimewithSlider();
 		management.setIsPaused(false);
 	}
 	public void pauseTimer() {
@@ -87,6 +107,7 @@ public class MainappControl implements Initializable{
 			changeSoundButtonwithHertz();
 		}
 	}
+
 	public void playSong() {
 		try {
 			management.continueorstopSong();
@@ -134,7 +155,6 @@ class ProgramManagement{
 	private long timeMediaEnd;
 	public static int SOUNDLV0 = 0, SOUNDLV1 = 30, SOUNDLV2 = 70;
 	public void continueorstopSong() throws InterruptedException {
-		mediaplayer.stop();
 		setIsPaused(!getIsPaused());
 	}
 	public void setMedia(MediaView mediaview) {
@@ -143,6 +163,7 @@ class ProgramManagement{
 		if(file == null) return;
 		mediaplayer.play(LocationFinder.filetoURL(file).toString());
 		mediaview.setMediaPlayer((MediaPlayer)mediaplayer.getMedia());
+		setIsPaused(false);
 		timeMediaEnd = mediaplayer.getLenght();
 		timerStart();
 		
@@ -184,7 +205,7 @@ class ProgramManagement{
 	public void seekTime(long second) {
 		mediaplayer.setTime(second);
 		setIsPaused(false);
-		if(mediaplayer.isStop())mediaplayer.stop();
+		mediaplayer.stop(false);
 	}
 	//it can got in time to previous seconds or forward seconds
 	public void forwardTime(long second) {
@@ -200,6 +221,7 @@ class ProgramManagement{
 	}
 	public void setIsPaused(Boolean isPaused) {
 		this.isPaused = isPaused;
+		mediaplayer.stop(isPaused);
 	}
 	private void timerStart() {
 		mediaTimer = new Timer();
@@ -215,7 +237,7 @@ class ProgramManagement{
 				}
 			}
 		};
-		getMusicTimer().scheduleAtFixedRate(task, 0, 50);
+		getMusicTimer().scheduleAtFixedRate(task, 0, 100);
 	}
 	private void timerEnd() {
 		mediaTimer.cancel();
