@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import businessLayer.DebugSettings;
 import businessLayer.MediaplayerFX;
 import businessLayer.MediaplayerInterface;
 import businessLayer.fileLocationManagement.LocationFinder;
@@ -14,6 +15,7 @@ import entitiesLayer.FileExtensionsList;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
@@ -24,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.Stage;
 
 public class MainappControl implements Initializable{
 	@FXML
@@ -79,6 +82,11 @@ public class MainappControl implements Initializable{
 			if(isPaused) putImage(btnPlay, "stop");
 			else putImage(btnPlay, "play");
 		};
+		@Override
+		public void mediaEnd() {
+			super.mediaEnd();
+			putImage(btnPlay, "replay");
+		};
 	};
 	
 	@Override
@@ -93,8 +101,6 @@ public class MainappControl implements Initializable{
 		        management.seekTime(value);
 		    }
 		});
-		mvPlayer.fitWidthProperty().bind(videoPane.widthProperty());
-		mvPlayer.fitHeightProperty().bind(videoPane.heightProperty());
 		
 	}
 	public void setHertzwithSlider() {
@@ -106,6 +112,9 @@ public class MainappControl implements Initializable{
 	public void setTimewithSlider() {
 		long second = (long) sldTime.getValue();
 		management.seekTime(second);
+	}
+	public void continueTimer() {
+		management.setIsPaused(false);
 	}
 	public void sldTimeClicked() {
 		setTimewithSlider();
@@ -124,13 +133,15 @@ public class MainappControl implements Initializable{
 	}
 
 	public void playSong() {
+		if(management.isMediaEnd()) {
+			management.seekTime(0);
+		}
 		try {
 			management.continueorstopSong();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Boolean isStop = management.getMediaplayer().isStop();
 
 	}
 	public void setMedia() {
@@ -144,6 +155,10 @@ public class MainappControl implements Initializable{
 	public void btnPrev() {
 		management.forwardTime(-timeForward);
 	}
+	public void closeApp() {
+		System.exit(0);
+	}
+
 	//this method change the 
 	private void changeSoundButtonwithHertz() {
 		int value = (int) sldSound.getValue();
@@ -175,7 +190,7 @@ class ProgramManagement{
 		setIsPaused(!getIsPaused());
 	}
 	public void setMedia(MediaView mediaview) {
-		timerEnd();
+		mediaEnd();
 		File file = PathShowerPC.FilelocationPC(FileExtensionsList.videoExt);
 		if(file == null) return;
 		mediaplayer.play(LocationFinder.filetoURL(file).toString());
@@ -269,26 +284,28 @@ class ProgramManagement{
 		}
 		return text;
 	}
+	public void mediaEnd() {
+		
+	}
+	public Boolean isMediaEnd() {
+		return timeMediaEnd == getTime();
+	}
 	private void timerStart() {
 		mediaTimer = new Timer();
 		TimerTask task = new TimerTask() {
-			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				if(getIsPaused()) return;
 				setTime(mediaplayer.getCurrentTime());
-				if(getTime()>timeMediaEnd) {
-					timerEnd();
+				if(getTime()>=timeMediaEnd) {
+					mediaEnd();
 				}
 			}
 		};
 		getMusicTimer().scheduleAtFixedRate(task, 0, 100);
 	}
-	private void timerEnd() {
-		mediaTimer.cancel();
-		timeMediaEnd = 0;
-	}
+
 
 	
 }

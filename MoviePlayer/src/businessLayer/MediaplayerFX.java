@@ -86,6 +86,14 @@ public class MediaplayerFX implements MediaplayerInterface{
 		if(MediaPlayer.Status.PAUSED == status) return true;
 		else return false;
 	}
+	@Override
+	public Boolean isMediaEnd() {
+		// TODO Auto-generated method stub
+		if(mediaplayer == null) return true;
+		MediaPlayer.Status status =  mediaplayer.getStatus();
+		if(MediaPlayer.Status.STOPPED == status) return true;
+		else return false;
+	}
 
 	@Override
 	public Boolean getMute() {
@@ -145,6 +153,7 @@ public class MediaplayerFX implements MediaplayerInterface{
 		}
 		this.filelocal = filelocal;
 	}
+
 
 
 
