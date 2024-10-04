@@ -15,6 +15,7 @@ import entitiesLayer.FileExtensionsList;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,6 +25,11 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
@@ -165,7 +171,7 @@ public class MainappControl implements Initializable{
 		String soundlvIcon = management.getSoundLVName(value);
 		putImage(btnSound, soundlvIcon);
 	}
-	private void putImage(Labeled sceneObject, String imagename) {
+	public static void putImage(Labeled sceneObject, String imagename) {
 		ImageView btnimg = (ImageView) sceneObject.getGraphic();
 		Image image = new Image(LocationFinder.filetoURL(LocationFinder.IMGfinder(imagename)).toString());
 		btnimg.setImage(image);
@@ -191,14 +197,29 @@ class ProgramManagement{
 	}
 	public void setMedia(MediaView mediaview) {
 		mediaEnd();
-		File file = PathShowerPC.FilelocationPC(FileExtensionsList.videoExt);
+		File file = PathShowerPC.FilelocationPC(FileExtensionsList.mediaExt);
 		if(file == null) return;
 		mediaplayer.play(LocationFinder.filetoURL(file).toString());
 		mediaview.setMediaPlayer((MediaPlayer)mediaplayer.getMedia());
+		setImageonMediaview(mediaview);
 		setIsPaused(false);
 		timeMediaEnd = mediaplayer.getLenght();
 		timerStart();
 		
+	}
+	private void setImageonMediaview(MediaView mediaview) {
+		if(!mediaplayer.isAudio()) {
+			mediaview.setVisible(true);
+		}
+		else {
+			Pane pane = (Pane) mediaview.getParent();
+			mediaview.setVisible(false);
+			Image image = new Image(LocationFinder.filetoURL(LocationFinder.IMGfinder("musicScreen")).toString());
+			pane.setStyle("-fx-background-image: url('" + image.getUrl() + "'); " +
+	                "-fx-background-size: cover; " +
+	                "-fx-background-position: center;");
+		}
+
 	}
 	public void setHertz(int hertz) {
 		mediaplayer.setSound(hertz);

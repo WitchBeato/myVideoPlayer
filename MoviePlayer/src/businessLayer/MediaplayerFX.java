@@ -10,6 +10,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.mp3.Mp3MetadataReader;
@@ -21,9 +28,11 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.mp3.Mp3Directory;
 import com.drew.metadata.mp4.Mp4Descriptor;
 import com.drew.metadata.mp4.Mp4Directory;
 
+import entitiesLayer.FileExtensionsList;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
@@ -103,26 +112,51 @@ public class MediaplayerFX implements MediaplayerInterface{
 	@Override
 	public long getLenght() {
 		Metadata metadata = null;
+		String fileExt = getExtension(filelocal.getPath());
 		try {
 			metadata = ImageMetadataReader.readMetadata(filelocal);
 		} catch (ImageProcessingException e) {
 			// TODO Auto-generated catch block
+			if(!FileExtensionsList.checkType(FileExtensionsList.audioExt, fileExt)) return 0;
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(metadata == null) return 0;
-		Mp4Directory directory = metadata.getFirstDirectoryOfType(Mp4Directory.class);
 		Long duration = null;
 		try {
-			duration = directory.getLong(Mp4Directory.TAG_DURATION);
+			switch (fileExt) {
+			case ".mp4":
+				Mp4Directory directory = metadata.getFirstDirectoryOfType(Mp4Directory.class);
+				duration = directory.getLong(Mp4Directory.TAG_DURATION);
+				break;
+			case ".mp3":
+				  AudioFile audioFile = null;
+				try {
+					audioFile = AudioFileIO.read(filelocal);
+				} catch (CannotReadException | IOException | TagException | ReadOnlyFileException
+						| InvalidAudioFrameException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return 0;
+				}
+				  duration = (long) audioFile.getAudioHeader().getTrackLength();
+				  duration *= 1000;
+				break;	
+			default:
+				break;
+			}
+
 		} catch (MetadataException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Duration milisecond = new Duration(duration);
-		return (long) milisecond.toMillis();
+		return duration;
+	}
+	private String getExtension(String filepath) {
+		int index = filepath.indexOf('.');
+		String ext = filepath.substring(index, filepath.length());
+		return ext;
 	}
 	@Override
 	public void setTime(long second) {
@@ -152,6 +186,28 @@ public class MediaplayerFX implements MediaplayerInterface{
 			}
 		}
 		this.filelocal = filelocal;
+	}
+	@Override
+	public Boolean isAudio() {
+		// TODO Auto-generated method stub
+		String path = filelocal.getPath();
+		String ext = giveExt(path);
+		switch (ext) {
+		case ".mp3": {
+			return true;
+		}
+		case ".mp4": {
+		}
+		case ".wav": {
+			return false;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + ext);
+		}
+	}
+	private String giveExt(String path) {
+		int index = path.indexOf('.');
+		return path.substring(index, path.length());
 	}
 
 

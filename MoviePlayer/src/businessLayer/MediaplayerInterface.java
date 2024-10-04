@@ -9,6 +9,7 @@ public interface MediaplayerInterface {
 	public void setSound(int soundlevel);
 	public void muteSound();
 	public Boolean getMute();
+	public Boolean isAudio();
 	public long getLenght();
 	public void setTime(long second);
 	public long getCurrentTime();
