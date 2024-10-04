@@ -25,6 +25,7 @@ public class App extends Application{
         primaryStage.setScene(scene);
         setStage(primaryStage);
         primaryStage.show();
+        System.out.println("oynuyor");
 	}
 	private void setStage(Stage stage) {
 		stage.setResizable(DebugSettings.isResizable);
